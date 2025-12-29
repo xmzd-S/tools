@@ -13,7 +13,16 @@
     <div class="chat-messages" ref="messagesContainer">
       <div v-for="message in messages" :key="message.id" class="message-item">
         <div class="message-avatar">
-          <a-avatar :icon="message.role === 'user' ? UserOutlined : RobotOutlined" />
+          <a-avatar v-if="message.role === 'user'">
+            <template #icon>
+              <UserOutlined />
+            </template>
+          </a-avatar>
+          <a-avatar v-else>
+            <template #icon>
+              <RobotOutlined />
+            </template>
+          </a-avatar>
         </div>
         <div class="message-content">
           <div class="message-bubble" :class="message.role">
