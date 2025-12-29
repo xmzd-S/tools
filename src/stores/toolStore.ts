@@ -25,59 +25,10 @@ export enum ToolCategory {
 export const initialTools: Tool[] = [
   {
     id: '1',
-    name: '代码编辑器',
-    description: '在线代码编辑器，支持多种编程语言',
-    category: ToolCategory.DEVELOPMENT,
-    icon: 'code'
-  },
-  {
-    id: '2',
-    name: '颜色选择器',
-    description: '快速选择和调整颜色值',
-    category: ToolCategory.DESIGN,
-    icon: 'bg-colors'
-  },
-  {
-    id: '3',
     name: 'JSON格式化',
     description: '格式化和验证JSON数据',
     category: ToolCategory.DEVELOPMENT,
     icon: 'file-text'
-  },
-  {
-    id: '4',
-    name: '图片压缩',
-    description: '在线图片压缩工具',
-    category: ToolCategory.UTILITY,
-    icon: 'picture'
-  },
-  {
-    id: '5',
-    name: '文本比较',
-    description: '比较两个文本的差异',
-    category: ToolCategory.PRODUCTIVITY,
-    icon: 'diff'
-  },
-  {
-    id: '6',
-    name: '时间戳转换',
-    description: '时间戳与日期格式相互转换',
-    category: ToolCategory.UTILITY,
-    icon: 'clock-circle'
-  },
-  {
-    id: '7',
-    name: '密码生成器',
-    description: '生成安全的随机密码',
-    category: ToolCategory.UTILITY,
-    icon: 'key'
-  },
-  {
-    id: '8',
-    name: '二维码生成',
-    description: '生成和解析二维码',
-    category: ToolCategory.UTILITY,
-    icon: 'qrcode'
   }
 ];
 
