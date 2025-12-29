@@ -1,5 +1,5 @@
 <template>
-  <div class="favorite-tools-section" v-if="favoriteTools.length > 0 && searchKeyword === ''">
+  <div class="favorite-tools-section" v-if="favoriteTools.length > 0">
     <div class="section-header">
       <h2>{{ sectionTitle }}</h2>
     </div>
@@ -23,14 +23,12 @@ import ToolCard from './ToolCard.vue';
 interface Props {
   favoriteTools: Tool[];
   popularTools: Tool[];
-  searchKeyword: string;
   sectionTitle?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   favoriteTools: () => [],
   popularTools: () => [],
-  searchKeyword: '',
   sectionTitle: '收藏工具',
 });
 

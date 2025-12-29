@@ -24,27 +24,24 @@ interface Props {
   filteredTools: Tool[];
   popularTools: Tool[];
   favoriteTools: Tool[];
-  searchKeyword: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   filteredTools: () => [],
   popularTools: () => [],
   favoriteTools: () => [],
-  searchKeyword: '',
 });
 
 
-// 过滤出既不是常用工具也不是收藏工具（在搜索时）的其他工具
+// 过滤出既不是常用工具也不是收藏工具的其他工具
 const displayTools = computed(() => {
   return props.filteredTools.filter(t => 
-    !props.popularTools.some(p => p.id === t.id) && 
-    (!props.searchKeyword || props.searchKeyword === '' || props.favoriteTools.some(f => f.id === t.id))
+    !props.popularTools.some(p => p.id === t.id)
   );
 });
 
 const sectionTitleComputed = computed(() => {
-  return props.searchKeyword ? '搜索结果' : '所有工具';
+  return '所有工具';
 });
 
 const handleToolClick = (tool: Tool) => {

@@ -8,7 +8,6 @@
     <FavoriteToolsSection
       :favorite-tools="toolStore.favoriteTools"
       :popular-tools="toolStore.popularTools"
-      :search-keyword="toolStore.searchKeyword"
       @tool-click="handleToolClick"
       @toggle-favorite="handleToggleFavorite"
     />
@@ -16,7 +15,6 @@
       :filtered-tools="toolStore.filteredTools"
       :popular-tools="toolStore.popularTools"
       :favorite-tools="toolStore.favoriteTools"
-      :search-keyword="toolStore.searchKeyword"
       @tool-click="handleToolClick"
       @toggle-favorite="handleToggleFavorite"
     />

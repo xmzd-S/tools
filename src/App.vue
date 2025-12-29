@@ -21,10 +21,7 @@ const handleToggleFavorite = (id: string) => {
   toolStore.toggleFavorite(id);
 };
 
-// 搜索功能
-const handleSearch = (value: string) => {
-  toolStore.setSearchKeyword(value);
-};
+
 
 // 关闭详情弹窗
 const closeDetail = () => {
@@ -46,16 +43,7 @@ const closeDetail = () => {
       </div>
     </div>
 
-    <!-- 顶部搜索栏 -->
-    <div class="search-bar">
-      <a-input-search
-        v-model:value="toolStore.searchKeyword"
-        placeholder="搜索工具名称、描述或分类..."
-        size="large"
-        @change="handleSearch"
-        enter-button
-      />
-    </div>
+
 
     <!-- 路由视图 -->
     <router-view 
@@ -127,50 +115,5 @@ const closeDetail = () => {
   font-weight: 600;
 }
 
-/* 搜索栏样式 */
-.search-bar {
-  margin: 32px auto;
-  padding: 0 20px;
-  max-width: 1200px;
-  animation: searchBarSlideDown 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  opacity: 0;
-  transform: translateY(-20px);
-}
 
-/* 搜索栏滑入动画 */
-@keyframes searchBarSlideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* 搜索框悬停效果 */
-:deep(.ant-input-search-large) {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-:deep(.ant-input-search-large:hover) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-}
-
-/* 搜索按钮动画 */
-:deep(.ant-input-search-button) {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-:deep(.ant-input-search-button:hover) {
-  transform: scale(1.05);
-}
-
-/* 输入框聚焦效果 */
-:deep(.ant-input:focus) {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-}
 </style>
