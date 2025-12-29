@@ -19,6 +19,8 @@ declare module 'vue' {
     FavoriteToolsSection: typeof import('./src/components/FavoriteToolsSection.vue')['default']
     OtherToolsSection: typeof import('./src/components/OtherToolsSection.vue')['default']
     PopularToolsSection: typeof import('./src/components/PopularToolsSection.vue')['default']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
     ToolCard: typeof import('./src/components/ToolCard.vue')['default']
     ToolDetailModal: typeof import('./src/components/ToolDetailModal.vue')['default']
   }

@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { useToolStore } from './stores/toolStore';
+import { ref } from 'vue';
 import type { Tool } from './stores/toolStore';
-import PopularToolsSection from './components/PopularToolsSection.vue';
-import FavoriteToolsSection from './components/FavoriteToolsSection.vue';
-import OtherToolsSection from './components/OtherToolsSection.vue';
 import ToolDetailModal from './components/ToolDetailModal.vue';
 
 const toolStore = useToolStore();
@@ -37,7 +34,18 @@ const closeDetail = () => {
 </script>
 
 <template>
-  <div class="toolkit-container">
+  <div class="app-container">
+    <!-- 导航栏 -->
+    <div class="nav-bar">
+      <div class="nav-left">
+        <h1>工具应用</h1>
+      </div>
+      <div class="nav-right">
+        <router-link to="/" class="nav-link">首页</router-link>
+        <router-link to="/about" class="nav-link">关于我们</router-link>
+      </div>
+    </div>
+
     <!-- 顶部搜索栏 -->
     <div class="search-bar">
       <a-input-search
@@ -49,32 +57,10 @@ const closeDetail = () => {
       />
     </div>
 
-    <!-- 常用工具部分 -->
-    <PopularToolsSection
-      :popular-tools="toolStore.popularTools"
-      section-title="常用工具"
-      @tool-click="handleToolClick"
-      @toggle-favorite="handleToggleFavorite"
-    />
-
-    <!-- 收藏工具部分 -->
-    <FavoriteToolsSection
-      :favorite-tools="toolStore.favoriteTools"
-      :popular-tools="toolStore.popularTools"
-      :search-keyword="toolStore.searchKeyword"
-      section-title="收藏工具"
-      @tool-click="handleToolClick"
-      @toggle-favorite="handleToggleFavorite"
-    />
-
-    <!-- 其他工具部分 -->
-    <OtherToolsSection
-      :filtered-tools="toolStore.filteredTools"
-      :popular-tools="toolStore.popularTools"
-      :favorite-tools="toolStore.favoriteTools"
-      :search-keyword="toolStore.searchKeyword"
-      @tool-click="handleToolClick"
-      @toggle-favorite="handleToggleFavorite"
+    <!-- 路由视图 -->
+    <router-view 
+      :handle-tool-click="handleToolClick"
+      :handle-toggle-favorite="handleToggleFavorite"
     />
 
     <!-- 工具详情弹窗 -->
@@ -89,19 +75,63 @@ const closeDetail = () => {
 </template>
 
 <style scoped>
-.toolkit-container {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: #f8fafc;
+.app-container {
   min-height: 100vh;
+  background-color: #f8fafc;
   color: #1e293b;
+}
+
+/* 导航栏样式 */
+.nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-left h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.nav-right {
+  display: flex;
+  gap: 24px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #666;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.nav-link.router-link-active {
+  color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.1);
+  font-weight: 600;
 }
 
 /* 搜索栏样式 */
 .search-bar {
-  margin-bottom: 32px;
+  margin: 32px auto;
   padding: 0 20px;
+  max-width: 1200px;
   animation: searchBarSlideDown 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   opacity: 0;
   transform: translateY(-20px);
@@ -142,44 +172,5 @@ const closeDetail = () => {
 :deep(.ant-input:focus) {
   border-color: #3b82f6;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-}
-
-.section-header {
-  margin: 32px 0 16px;
-  padding: 0 20px;
-  display: flex;
-  align-items: center;
-  animation: sectionHeaderFadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.2s;
-  opacity: 0;
-}
-
-/* 区域标题淡入动画 */
-@keyframes sectionHeaderFadeIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.section-header h2 {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 700;
-  color: #1e293b;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  transition: all 0.3s ease;
-}
-
-/* 区域标题悬停效果 */
-.section-header h2:hover {
-  filter: brightness(1.1);
-  text-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 </style>
