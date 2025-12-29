@@ -26,7 +26,7 @@
         </div>
         <div class="message-content">
           <div class="message-bubble" :class="message.role">
-            <div v-html="message.content"></div>
+            <div>{{ message.content }}</div>
             <div class="message-timestamp">{{ formatTimestamp(message.timestamp) }}</div>
           </div>
         </div>
@@ -217,8 +217,17 @@ const handleSend = async () => {
     messages.value.push(assistantMessage)
 
     // 调用 API 获取响应
+    console.log('Calling callOpenAIStream with:', {
+      content,
+      messageCount: messages.value.length,
+      config: { ...config.value, apiKey: '***' } // 隐藏 API Key
+    })
     await callOpenAIStream(content, messages.value, config.value, (chunk: string) => {
-      assistantMessage.content += chunk
+      console.log('Received chunk in callback:', chunk)
+      // 使用数组索引更新消息内容，确保 Vue 能够检测到响应式变化
+      const index = messages.value.length - 1
+      messages.value[index].content += chunk
+      console.log('Assistant message content after update:', messages.value[index].content)
     })
   } catch (error) {
     console.error('API 调用错误:', error)

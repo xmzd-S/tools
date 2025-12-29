@@ -44,25 +44,50 @@ export const callOpenAIStream = async (
   }, 60000) // 60秒超时
 
   try {
+    console.log('Sending request to:', url)
+    console.log('Request body:', JSON.stringify({
+      model: config.model,
+      messages: [
+        ...messages.filter(msg => msg.id !== 'welcome').map(msg => ({
+          role: msg.role,
+          content: msg.content
+        })),
+        { role: 'user', content: prompt }
+      ],
+      stream: true
+    }, null, 2))
+    // 构建请求体，确保只包含当前用户消息之前的历史消息
+    // 注意：messages 数组已经包含了刚刚添加的当前用户消息，所以需要去掉最后一个元素
+    const requestMessages = messages
+      .filter(msg => msg.id !== 'welcome')
+      .slice(0, -1) // 去掉最后一个消息（当前用户消息）
+      .map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }))
+
+    // 添加当前用户消息
+    requestMessages.push({ role: 'user', content: prompt })
+
+    const requestBody = {
+      model: config.model,
+      messages: requestMessages,
+      stream: true
+    }
+
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${config.apiKey}`
       },
-      body: JSON.stringify({
-        model: config.model,
-        messages: [
-          ...messages.filter(msg => msg.id !== 'welcome').map(msg => ({
-            role: msg.role,
-            content: msg.content
-          })),
-          { role: 'user', content: prompt }
-        ],
-        stream: true
-      }),
+      body: JSON.stringify(requestBody),
       signal
     })
+
+    console.log('Response status:', response.status)
+    console.log('Response headers:', Object.fromEntries(response.headers))
+    console.log('Response content-type:', response.headers.get('content-type'))
 
     if (!response.ok) {
       // 尝试解析 API 返回的错误信息
@@ -74,76 +99,56 @@ export const callOpenAIStream = async (
         }
       } catch (jsonError) {
         // 如果无法解析 JSON，则使用状态文本
+        console.error('Failed to parse error response:', jsonError)
       }
       throw new Error(errorMessage)
     }
 
-    const reader = response.body?.getReader()
-    if (!reader) {
+    if (!response.body) {
       throw new Error('无法获取响应流')
     }
 
+    const reader = response.body.getReader()
+    console.log('Created reader:', reader)
+
     const decoder = new TextDecoder()
     let buffer = ''
-    let currentEvent = { event: 'message', data: '', id: '' }
 
     while (true) {
       const { done, value } = await reader.read()
+      console.log('Reader read result:', { done, value: value ? `${value.byteLength} bytes` : null })
       if (done) break
 
       buffer += decoder.decode(value, { stream: true })
+      console.log('Buffer after decode:', buffer)
       
-      // 处理 SSE 响应格式（符合标准 SSE 规范）
+      // 处理 OpenAI API 流式响应格式
       const lines = buffer.split('\n')
       buffer = lines.pop() || ''
 
       for (const line of lines) {
-        if (line.trim() === '') {
-          // 空行表示事件结束，处理当前事件
-          if (currentEvent.data) {
-            if (currentEvent.data.trim() === '[DONE]') {
-              // 流式结束标记
-              break
-            }
-            
-            try {
-              const json = JSON.parse(currentEvent.data)
-              const content = json.choices[0]?.delta?.content
-              if (content) {
-                onChunk(content)
-              }
-            } catch (e) {
-              console.error('解析流式响应错误:', e)
-            }
-          }
-          // 重置当前事件
-          currentEvent = { event: 'message', data: '', id: '' }
-          continue
-        }
-
-        // 解析 SSE 字段
-        // 支持: event: message, data: {json}, id: 123
-        const fieldMatch = line.match(/^(\w+):(?:\s+)?(.+)?$/)
-        if (!fieldMatch) continue
-
-        const [, field, value] = fieldMatch
+        if (line.trim() === '') continue
         
-        switch (field) {
-          case 'event':
-            currentEvent.event = value?.trim() || 'message'
-            break
-          case 'data':
-            // 处理多行数据（以空格开头的行是上一行的延续）
-            if (value && value.startsWith(' ')) {
-              currentEvent.data += value
-            } else {
-              currentEvent.data += (value || '') + '\n'
+        // 检查是否是 SSE 数据行（以 "data: " 开头）
+        if (line.startsWith('data: ')) {
+          const dataStr = line.slice(6).trim()
+          
+          if (dataStr === '[DONE]') {
+            // 流式结束标记
+            continue
+          }
+          
+          try {
+            const json = JSON.parse(dataStr)
+            const content = json.choices[0]?.delta?.content
+            if (content) {
+              console.log('Received chunk:', content)
+              onChunk(content)
             }
-            break
-          case 'id':
-            currentEvent.id = value?.trim() || ''
-            break
-          // 忽略其他字段
+          } catch (e) {
+            console.error('解析流式响应错误:', e)
+            console.error('错误数据行:', line)
+          }
         }
       }
     }
