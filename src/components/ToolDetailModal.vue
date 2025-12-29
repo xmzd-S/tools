@@ -55,6 +55,7 @@
 
 <script setup lang="ts">
 import type { Tool } from '../stores/toolStore';
+import { TOOL_ID_JSON_FORMATTER } from '../stores/toolStore';
 import { ref, watch, computed } from 'vue';
 import * as Icons from '@ant-design/icons-vue';
 import JSONFormatter from './JSONFormatter.vue';
@@ -123,7 +124,7 @@ const getCategoryClass = (category: string) => {
 
 // 处理打开工具按钮点击
 const handleOpenTool = () => {
-  if (props.selectedTool?.id === '1') { // JSON格式化工具的ID
+  if (props.selectedTool?.id === TOOL_ID_JSON_FORMATTER) { // JSON格式化工具的ID
     showJSONFormatter.value = true;
   }
 };

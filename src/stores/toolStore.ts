@@ -21,10 +21,13 @@ export enum ToolCategory {
   OTHER = '其他'
 }
 
+// 工具ID常量
+export const TOOL_ID_JSON_FORMATTER = '1';
+
 // 模拟工具数据
 export const initialTools: Tool[] = [
   {
-    id: '1',
+    id: TOOL_ID_JSON_FORMATTER,
     name: 'JSON格式化',
     description: '格式化和验证JSON数据',
     category: ToolCategory.DEVELOPMENT,
