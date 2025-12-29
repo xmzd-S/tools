@@ -13,7 +13,7 @@
     <div class="chat-messages" ref="messagesContainer">
       <div v-for="message in messages" :key="message.id" class="message-item">
         <div class="message-avatar">
-          <a-avatar :icon="message.role === 'user' ? <UserOutlined /> : <RobotOutlined />" />
+          <a-avatar :icon="message.role === 'user' ? UserOutlined : RobotOutlined" />
         </div>
         <div class="message-content">
           <div class="message-bubble" :class="message.role">
@@ -23,7 +23,7 @@
       </div>
       <div v-if="isLoading" class="message-item">
         <div class="message-avatar">
-          <a-avatar :icon="<RobotOutlined />" />
+          <a-avatar :icon="RobotOutlined" />
         </div>
         <div class="message-content">
           <div class="message-bubble assistant">
@@ -42,7 +42,6 @@
         :disabled="isLoading"
         placeholder="请输入您的问题..."
         @keyup.enter="handleSend"
-        :prefix="<MessageOutlined />"
       />
       <a-button type="primary" @click="handleSend" :disabled="isLoading || !inputValue.trim()">
         <template #icon>
@@ -92,7 +91,6 @@ import {
   SettingOutlined,
   UserOutlined,
   RobotOutlined,
-  MessageOutlined,
   SendOutlined
 } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
