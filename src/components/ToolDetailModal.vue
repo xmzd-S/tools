@@ -33,19 +33,31 @@
         </div>
         
         <div class="tool-actions">
-          <a-button type="primary" size="large" class="action-btn">
+          <a-button type="primary" size="large" class="action-btn" @click="handleOpenTool">
             打开工具
           </a-button>
         </div>
       </div>
     </div>
   </a-modal>
+
+  <!-- JSON格式化工具模态框 -->
+<a-modal
+  v-model:open="showJSONFormatter"
+  title="JSON格式化工具"
+  :footer="null"
+  width="900px"
+  body-style="padding: 20px"
+>
+  <JSONFormatter />
+</a-modal>
 </template>
 
 <script setup lang="ts">
 import type { Tool } from '../stores/toolStore';
 import { ref, watch, computed } from 'vue';
 import * as Icons from '@ant-design/icons-vue';
+import JSONFormatter from './JSONFormatter.vue';
 
 interface Props {
   selectedTool: Tool | null;
@@ -61,6 +73,9 @@ const emit = defineEmits<{
   (e: 'update:visible', visible: boolean): void;
   (e: 'close'): void;
 }>();
+
+// 控制JSON格式化工具是否显示
+const showJSONFormatter = ref(false);
 
 // 使用计算属性来控制模态框的显示
 const modalVisible = computed({
@@ -104,6 +119,13 @@ const getCategoryClass = (category: string) => {
   };
   
   return categoryMap[category] || 'category-other';
+};
+
+// 处理打开工具按钮点击
+const handleOpenTool = () => {
+  if (props.selectedTool?.id === '1') { // JSON格式化工具的ID
+    showJSONFormatter.value = true;
+  }
 };
 </script>
 
