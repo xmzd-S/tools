@@ -16,12 +16,10 @@ declare module 'vue' {
     AInputSearch: typeof import('ant-design-vue/es')['InputSearch']
     AModal: typeof import('ant-design-vue/es')['Modal']
     ASwitch: typeof import('ant-design-vue/es')['Switch']
-    FavoriteToolsSection: typeof import('./src/components/FavoriteToolsSection.vue')['default']
-    OtherToolsSection: typeof import('./src/components/OtherToolsSection.vue')['default']
-    PopularToolsSection: typeof import('./src/components/PopularToolsSection.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ToolCard: typeof import('./src/components/ToolCard.vue')['default']
     ToolDetailModal: typeof import('./src/components/ToolDetailModal.vue')['default']
+    ToolsSection: typeof import('./src/components/ToolsSection.vue')['default']
   }
 }

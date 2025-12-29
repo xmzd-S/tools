@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <OtherToolsSection
+    <ToolsSection
       :filtered-tools="toolStore.filteredTools"
       @tool-click="handleToolClick"
     />
@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import OtherToolsSection from '../components/OtherToolsSection.vue'
+import ToolsSection from '../components/ToolsSection.vue'
 import type { Tool } from '../stores/toolStore'
 import { useToolStore } from '../stores/toolStore'
 
