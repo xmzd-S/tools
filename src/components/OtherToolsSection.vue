@@ -9,7 +9,6 @@
         :key="tool.id"
         :tool="tool"
         @click="handleToolClick"
-        @toggle-favorite="handleToggleFavorite"
       />
     </div>
   </div>
@@ -22,22 +21,15 @@ import ToolCard from './ToolCard.vue';
 
 interface Props {
   filteredTools: Tool[];
-  popularTools: Tool[];
-  favoriteTools: Tool[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   filteredTools: () => [],
-  popularTools: () => [],
-  favoriteTools: () => [],
 });
 
-
-// 过滤出既不是常用工具也不是收藏工具的其他工具
+// 直接显示所有过滤后的工具
 const displayTools = computed(() => {
-  return props.filteredTools.filter(t => 
-    !props.popularTools.some(p => p.id === t.id)
-  );
+  return props.filteredTools;
 });
 
 const sectionTitleComputed = computed(() => {
@@ -48,13 +40,8 @@ const handleToolClick = (tool: Tool) => {
   emit('tool-click', tool);
 };
 
-const handleToggleFavorite = (id: string) => {
-  emit('toggle-favorite', id);
-};
-
 const emit = defineEmits<{
   (e: 'tool-click', tool: Tool): void;
-  (e: 'toggle-favorite', id: string): void;
 }>();
 </script>
 

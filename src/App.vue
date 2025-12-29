@@ -11,17 +11,9 @@ const showToolDetail = ref(false);
 
 // 处理工具点击事件
 const handleToolClick = (tool: Tool) => {
-  toolStore.incrementUsage(tool.id);
   toolStore.setSelectedTool(tool);
   showToolDetail.value = true;
 };
-
-// 处理收藏切换
-const handleToggleFavorite = (id: string) => {
-  toolStore.toggleFavorite(id);
-};
-
-
 
 // 关闭详情弹窗
 const closeDetail = () => {
@@ -48,7 +40,6 @@ const closeDetail = () => {
     <!-- 路由视图 -->
     <router-view 
       :handle-tool-click="handleToolClick"
-      :handle-toggle-favorite="handleToggleFavorite"
     />
 
     <!-- 工具详情弹窗 -->
@@ -56,7 +47,6 @@ const closeDetail = () => {
       :selected-tool="toolStore.selectedTool"
       :visible="showToolDetail"
       @update:visible="showToolDetail = $event"
-      @toggle-favorite="handleToggleFavorite"
       @close="closeDetail"
     />
   </div>

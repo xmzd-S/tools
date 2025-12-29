@@ -11,28 +11,16 @@
           <span v-else>🧰</span>
         </span>
         <span>{{ tool.name }}</span>
-        <a-button
-          type="text"
-          @click.stop="toggleFavorite"
-          :class="{ 'favorite': tool.isFavorite }"
-        >
-          <template #icon>
-            <HeartFilled v-if="tool.isFavorite" />
-            <HeartOutlined v-else />
-          </template>
-        </a-button>
       </div>
     </template>
     <p class="tool-description">{{ tool.description }}</p>
     <div class="tool-meta">
       <span class="category" :title="tool.category">{{ tool.category }}</span>
-      <span class="usage-count">使用 {{ tool.usageCount }} 次</span>
     </div>
   </a-card>
 </template>
 
 <script setup lang="ts">
-import { HeartFilled, HeartOutlined } from '@ant-design/icons-vue';
 import type { Tool } from '../stores/toolStore';
 
 interface Props {
@@ -41,7 +29,6 @@ interface Props {
 
 interface Emits {
   (e: 'click', tool: Tool): void;
-  (e: 'toggle-favorite', id: string): void;
 }
 
 const props = defineProps<Props>();
@@ -49,10 +36,6 @@ const emit = defineEmits<Emits>();
 
 const handleClick = () => {
   emit('click', props.tool);
-};
-
-const toggleFavorite = () => {
-  emit('toggle-favorite', props.tool.id);
 };
 
 // 根据图标名称返回对应的图标组件

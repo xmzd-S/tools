@@ -9,8 +9,6 @@ export interface Tool {
   category: string;
   icon: string;
   url?: string;
-  isFavorite: boolean;
-  usageCount: number;
 }
 
 // 工具分类枚举
@@ -30,72 +28,56 @@ export const initialTools: Tool[] = [
     name: '代码编辑器',
     description: '在线代码编辑器，支持多种编程语言',
     category: ToolCategory.DEVELOPMENT,
-    icon: 'code',
-    isFavorite: true,
-    usageCount: 15
+    icon: 'code'
   },
   {
     id: '2',
     name: '颜色选择器',
     description: '快速选择和调整颜色值',
     category: ToolCategory.DESIGN,
-    icon: 'bg-colors',
-    isFavorite: true,
-    usageCount: 12
+    icon: 'bg-colors'
   },
   {
     id: '3',
     name: 'JSON格式化',
     description: '格式化和验证JSON数据',
     category: ToolCategory.DEVELOPMENT,
-    icon: 'file-text',
-    isFavorite: false,
-    usageCount: 8
+    icon: 'file-text'
   },
   {
     id: '4',
     name: '图片压缩',
     description: '在线图片压缩工具',
     category: ToolCategory.UTILITY,
-    icon: 'picture',
-    isFavorite: false,
-    usageCount: 5
+    icon: 'picture'
   },
   {
     id: '5',
     name: '文本比较',
     description: '比较两个文本的差异',
     category: ToolCategory.PRODUCTIVITY,
-    icon: 'diff',
-    isFavorite: true,
-    usageCount: 10
+    icon: 'diff'
   },
   {
     id: '6',
     name: '时间戳转换',
     description: '时间戳与日期格式相互转换',
     category: ToolCategory.UTILITY,
-    icon: 'clock-circle',
-    isFavorite: false,
-    usageCount: 7
+    icon: 'clock-circle'
   },
   {
     id: '7',
     name: '密码生成器',
     description: '生成安全的随机密码',
     category: ToolCategory.UTILITY,
-    icon: 'key',
-    isFavorite: false,
-    usageCount: 6
+    icon: 'key'
   },
   {
     id: '8',
     name: '二维码生成',
     description: '生成和解析二维码',
     category: ToolCategory.UTILITY,
-    icon: 'qrcode',
-    isFavorite: true,
-    usageCount: 14
+    icon: 'qrcode'
   }
 ];
 
@@ -112,27 +94,10 @@ export const useToolStore = defineStore('tool', () => {
   // 获取所有工具
   const allTools = computed(() => tools.value);
   
-  // 获取收藏的工具
-  const favoriteTools = computed(() => 
-    tools.value.filter(tool => tool.isFavorite)
-  );
-  
-  // 获取非收藏的工具
-  const regularTools = computed(() => 
-    tools.value.filter(tool => !tool.isFavorite)
-  );
-  
-  // 获取常用工具（使用次数多的工具）
-  const popularTools = computed(() => 
-    [...tools.value]
-      .filter(tool => tool.usageCount >= 10)
-      .sort((a, b) => b.usageCount - a.usageCount)
-  );
-  
   // 搜索过滤后的工具
   const filteredTools = computed(() => {
     if (!searchKeyword.value.trim()) {
-      return [...favoriteTools.value, ...regularTools.value];
+      return tools.value;
     }
     
     const keyword = searchKeyword.value.toLowerCase();
@@ -161,11 +126,10 @@ export const useToolStore = defineStore('tool', () => {
   });
   
   // 添加工具
-  const addTool = (tool: Omit<Tool, 'id' | 'usageCount'>) => {
+  const addTool = (tool: Omit<Tool, 'id'>) => {
     const newTool: Tool = {
       ...tool,
-      id: Date.now().toString(),
-      usageCount: 0
+      id: Date.now().toString()
     };
     tools.value.push(newTool);
   };
@@ -186,22 +150,6 @@ export const useToolStore = defineStore('tool', () => {
     }
   };
   
-  // 切换收藏状态
-  const toggleFavorite = (id: string) => {
-    const tool = tools.value.find(tool => tool.id === id);
-    if (tool) {
-      tool.isFavorite = !tool.isFavorite;
-    }
-  };
-  
-  // 增加使用次数
-  const incrementUsage = (id: string) => {
-    const tool = tools.value.find(tool => tool.id === id);
-    if (tool) {
-      tool.usageCount += 1;
-    }
-  };
-  
   // 设置搜索关键词
   const setSearchKeyword = (keyword: string) => {
     searchKeyword.value = keyword;
@@ -219,9 +167,6 @@ export const useToolStore = defineStore('tool', () => {
 
   return {
     tools: allTools,
-    favoriteTools,
-    regularTools,
-    popularTools,
     filteredTools,
     categories,
     toolsByCategory,
@@ -231,8 +176,6 @@ export const useToolStore = defineStore('tool', () => {
     addTool,
     updateTool,
     deleteTool,
-    toggleFavorite,
-    incrementUsage,
     setSearchKeyword,
     resetSearch,
     setSelectedTool

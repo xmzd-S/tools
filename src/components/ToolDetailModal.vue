@@ -30,32 +30,11 @@
             <span class="label">分类：</span>
             <span class="value category-tag" :title="selectedTool.category">{{ selectedTool.category }}</span>
           </div>
-          <div class="meta-item">
-            <span class="label">使用次数：</span>
-            <span class="value">{{ selectedTool.usageCount }}</span>
-          </div>
-          <div class="meta-item">
-            <span class="label">收藏状态：</span>
-            <a-switch
-              :checked="selectedTool.isFavorite"
-              @change="handleToggleFavorite"
-              checked-children="收藏"
-              un-checked-children="未收藏"
-            />
-          </div>
         </div>
         
         <div class="tool-actions">
           <a-button type="primary" size="large" class="action-btn">
             打开工具
-          </a-button>
-          <a-button 
-            :type="selectedTool.isFavorite ? 'default' : 'default'" 
-            :class="{ 'favorite-btn': selectedTool.isFavorite }"
-            @click="handleToggleFavoriteClick" 
-            size="large"
-          >
-            {{ selectedTool.isFavorite ? '取消收藏' : '添加收藏' }}
           </a-button>
         </div>
       </div>
@@ -80,7 +59,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   (e: 'update:visible', visible: boolean): void;
-  (e: 'toggle-favorite', id: string): void;
   (e: 'close'): void;
 }>();
 
@@ -96,18 +74,6 @@ const modalVisible = computed({
     }
   }
 });
-
-const handleToggleFavorite = () => {
-  if (props.selectedTool) {
-    emit('toggle-favorite', props.selectedTool.id);
-  }
-};
-
-const handleToggleFavoriteClick = () => {
-  if (props.selectedTool) {
-    emit('toggle-favorite', props.selectedTool.id);
-  }
-};
 
 // 根据图标名称返回对应的图标组件
 const getIconComponent = (iconName: string) => {
