@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { useToolStore } from './stores/toolStore';
 import type { Tool } from './stores/toolStore';
-import ToolCard from './components/ToolCard.vue';
+import PopularToolsSection from './components/PopularToolsSection.vue';
+import FavoriteToolsSection from './components/FavoriteToolsSection.vue';
+import OtherToolsSection from './components/OtherToolsSection.vue';
+import ToolDetailModal from './components/ToolDetailModal.vue';
 
 const toolStore = useToolStore();
 
@@ -47,93 +50,41 @@ const closeDetail = () => {
     </div>
 
     <!-- 常用工具部分 -->
-    <div class="popular-tools-section" v-if="toolStore.popularTools.length > 0">
-      <div class="section-header">
-        <h2>常用工具</h2>
-      </div>
-      <div class="tools-grid">
-        <ToolCard
-          v-for="tool in toolStore.popularTools"
-          :key="tool.id"
-          :tool="tool"
-          @click="handleToolClick"
-          @toggle-favorite="handleToggleFavorite"
-        />
-      </div>
-    </div>
+    <PopularToolsSection
+      :popular-tools="toolStore.popularTools"
+      section-title="常用工具"
+      @tool-click="handleToolClick"
+      @toggle-favorite="handleToggleFavorite"
+    />
 
     <!-- 收藏工具部分 -->
-    <div class="favorite-tools-section" v-if="toolStore.favoriteTools.length > 0 && toolStore.searchKeyword === ''">
-      <div class="section-header">
-        <h2>收藏工具</h2>
-      </div>
-      <div class="tools-grid">
-        <ToolCard
-          v-for="tool in toolStore.favoriteTools.filter(t => !toolStore.popularTools.some(p => p.id === t.id))"
-          :key="tool.id"
-          :tool="tool"
-          @click="handleToolClick"
-          @toggle-favorite="handleToggleFavorite"
-        />
-      </div>
-    </div>
+    <FavoriteToolsSection
+      :favorite-tools="toolStore.favoriteTools"
+      :popular-tools="toolStore.popularTools"
+      :search-keyword="toolStore.searchKeyword"
+      section-title="收藏工具"
+      @tool-click="handleToolClick"
+      @toggle-favorite="handleToggleFavorite"
+    />
 
     <!-- 其他工具部分 -->
-    <div class="other-tools-section">
-      <div class="section-header">
-        <h2 v-if="toolStore.searchKeyword">搜索结果</h2>
-        <h2 v-else>所有工具</h2>
-      </div>
-      <div class="tools-grid">
-        <ToolCard
-          v-for="tool in toolStore.filteredTools.filter(t => 
-            !toolStore.popularTools.some(p => p.id === t.id) && 
-            (!toolStore.searchKeyword || toolStore.searchKeyword === '' || toolStore.favoriteTools.some(f => f.id === t.id))
-          )"
-          :key="tool.id"
-          :tool="tool"
-          @click="handleToolClick"
-          @toggle-favorite="handleToggleFavorite"
-        />
-      </div>
-    </div>
+    <OtherToolsSection
+      :filtered-tools="toolStore.filteredTools"
+      :popular-tools="toolStore.popularTools"
+      :favorite-tools="toolStore.favoriteTools"
+      :search-keyword="toolStore.searchKeyword"
+      @tool-click="handleToolClick"
+      @toggle-favorite="handleToggleFavorite"
+    />
 
     <!-- 工具详情弹窗 -->
-    <a-modal
-      v-model:open="showToolDetail"
-      :title="toolStore.selectedTool?.name"
-      :footer="null"
-      width="600px"
-    >
-      <div v-if="toolStore.selectedTool" class="tool-detail">
-        <p class="tool-desc">{{ toolStore.selectedTool.description }}</p>
-        <div class="detail-meta">
-          <div class="meta-item">
-            <span class="label">分类：</span>
-            <span class="value">{{ toolStore.selectedTool.category }}</span>
-          </div>
-          <div class="meta-item">
-            <span class="label">使用次数：</span>
-            <span class="value">{{ toolStore.selectedTool.usageCount }}</span>
-          </div>
-          <div class="meta-item">
-            <span class="label">收藏状态：</span>
-            <a-switch
-              :checked="toolStore.selectedTool.isFavorite"
-              @change="handleToggleFavorite(toolStore.selectedTool!.id)"
-            />
-          </div>
-        </div>
-        <div class="tool-actions">
-          <a-button type="primary" size="large">
-            打开工具
-          </a-button>
-          <a-button @click="handleToggleFavorite(toolStore.selectedTool.id)" size="large">
-            {{ toolStore.selectedTool.isFavorite ? '取消收藏' : '添加收藏' }}
-          </a-button>
-        </div>
-      </div>
-    </a-modal>
+    <ToolDetailModal
+      :selected-tool="toolStore.selectedTool"
+      :visible="showToolDetail"
+      @update:visible="showToolDetail = $event"
+      @toggle-favorite="handleToggleFavorite"
+      @close="closeDetail"
+    />
   </div>
 </template>
 
