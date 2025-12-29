@@ -26,7 +26,7 @@
         </div>
         <div class="message-content">
           <div class="message-bubble" :class="message.role">
-            <div>{{ message.content }}</div>
+            <div v-html="message.content"></div>
             <div class="message-timestamp">{{ formatTimestamp(message.timestamp) }}</div>
           </div>
         </div>
@@ -226,8 +226,12 @@ const handleSend = async () => {
       console.log('Received chunk in callback:', chunk)
       // 使用数组索引更新消息内容，确保 Vue 能够检测到响应式变化
       const index = messages.value.length - 1
+      console.log('Updating message at index:', index)
+      console.log('Current content before update:', messages.value[index].content)
       messages.value[index].content += chunk
       console.log('Assistant message content after update:', messages.value[index].content)
+      console.log('Messages array length:', messages.value.length)
+      console.log('Messages array after update:', JSON.stringify(messages.value[index], null, 2))
     })
   } catch (error) {
     console.error('API 调用错误:', error)
