@@ -106,19 +106,8 @@ import {
   SendOutlined
 } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
+import { callOpenAIStream, type Message, type ChatConfig } from '../services/chatApi'
 
-interface Message {
-  id: string
-  role: 'user' | 'assistant'
-  content: string
-  timestamp: Date
-}
-
-interface Config {
-  apiKey: string
-  model: string
-  baseUrl: string
-}
 
 // 状态管理
 const messages = ref<Message[]>([])
@@ -128,7 +117,7 @@ const showConfigModal = ref(false)
 const messagesContainer = ref<HTMLElement | null>(null)
 
 // 配置
-const config = ref<Config>({
+const config = ref<ChatConfig>({
   apiKey: localStorage.getItem('openai-api-key') || '',
   model: localStorage.getItem('openai-model') || 'gpt-3.5-turbo',
   baseUrl: localStorage.getItem('openai-base-url') || 'https://api.openai.com/v1'
@@ -228,8 +217,8 @@ const handleSend = async () => {
     messages.value.push(assistantMessage)
 
     // 调用 API 获取响应
-    await callOpenAIStream(content, (chunk: string) => {
-      assistantMessage.content = chunk
+    await callOpenAIStream(content, messages.value, config.value, (chunk: string) => {
+      assistantMessage.content += chunk
     })
   } catch (error) {
     console.error('API 调用错误:', error)
@@ -253,79 +242,7 @@ const handleSend = async () => {
   }
 }
 
-// 调用 OpenAI API 流式接口
-const callOpenAIStream = async (prompt: string, onChunk: (chunk: string) => void) => {
-  const baseUrl = config.value.baseUrl || 'https://api.openai.com/v1'
-  const url = `${baseUrl}/chat/completions`
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${config.value.apiKey}`
-    },
-    body: JSON.stringify({
-      model: config.value.model,
-      messages: [
-        ...messages.value.filter(msg => msg.id !== 'welcome').map(msg => ({
-          role: msg.role,
-          content: msg.content
-        })),
-        { role: 'user', content: prompt }
-      ],
-      stream: true
-    })
-  })
-
-  if (!response.ok) {
-    // 尝试解析 API 返回的错误信息
-    try {
-      const errorData = await response.json()
-      if (errorData.error) {
-        throw new Error(`API 请求失败: ${errorData.error.message || errorData.error.code}`)
-      }
-    } catch (jsonError) {
-      // 如果无法解析 JSON，则使用状态文本
-    }
-    throw new Error(`API 请求失败: ${response.status} ${response.statusText}`)
-  }
-
-  const reader = response.body?.getReader()
-  if (!reader) {
-    throw new Error('无法获取响应流')
-  }
-
-  const decoder = new TextDecoder()
-  let buffer = ''
-
-  while (true) {
-    const { done, value } = await reader.read()
-    if (done) break
-
-    buffer += decoder.decode(value, { stream: true })
-    
-    // 处理 SSE 响应格式
-    const lines = buffer.split('\n')
-    buffer = lines.pop() || ''
-
-    for (const line of lines) {
-      if (!line.startsWith('data: ')) continue
-      
-      const data = line.slice(6).trim()
-      if (data === '[DONE]') continue
-
-      try {
-        const json = JSON.parse(data)
-        const content = json.choices[0]?.delta?.content
-        if (content) {
-          onChunk(content)
-        }
-      } catch (e) {
-        console.error('解析流式响应错误:', e)
-      }
-    }
-  }
-}
 </script>
 
 <style scoped>
