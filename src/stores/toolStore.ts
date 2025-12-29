@@ -23,6 +23,7 @@ export enum ToolCategory {
 
 // 工具ID常量
 export const TOOL_ID_JSON_FORMATTER = '1';
+export const TOOL_ID_AI_CHAT = '2';
 
 // 模拟工具数据
 export const initialTools: Tool[] = [
@@ -32,6 +33,13 @@ export const initialTools: Tool[] = [
     description: '格式化和验证JSON数据',
     category: ToolCategory.DEVELOPMENT,
     icon: 'file-text'
+  },
+  {
+    id: TOOL_ID_AI_CHAT,
+    name: 'AI聊天',
+    description: '与AI进行智能对话',
+    category: ToolCategory.UTILITY,
+    icon: 'message'
   }
 ];
 

@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { FormatPainterOutlined, ClearOutlined, CopyOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 

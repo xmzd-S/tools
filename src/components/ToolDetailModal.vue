@@ -51,14 +51,26 @@
 >
   <JSONFormatter />
 </a-modal>
+
+<!-- AI聊天工具模态框 -->
+<a-modal
+  v-model:open="showAIChat"
+  title="AI聊天工具"
+  :footer="null"
+  width="900px"
+  body-style="padding: 20px"
+>
+  <AIChat />
+</a-modal>
 </template>
 
 <script setup lang="ts">
 import type { Tool } from '../stores/toolStore';
-import { TOOL_ID_JSON_FORMATTER } from '../stores/toolStore';
-import { ref, watch, computed } from 'vue';
+import { TOOL_ID_JSON_FORMATTER, TOOL_ID_AI_CHAT } from '../stores/toolStore';
+import { ref, computed } from 'vue';
 import * as Icons from '@ant-design/icons-vue';
 import JSONFormatter from './JSONFormatter.vue';
+import AIChat from './AIChat.vue';
 
 interface Props {
   selectedTool: Tool | null;
@@ -77,6 +89,8 @@ const emit = defineEmits<{
 
 // 控制JSON格式化工具是否显示
 const showJSONFormatter = ref(false);
+// 控制AI聊天工具是否显示
+const showAIChat = ref(false);
 
 // 使用计算属性来控制模态框的显示
 const modalVisible = computed({
@@ -94,18 +108,18 @@ const modalVisible = computed({
 // 根据图标名称返回对应的图标组件
 const getIconComponent = (iconName: string) => {
   const iconMap: Record<string, any> = {
-    code: 'CodeOutlined',
-    'bg-colors': 'BgColorsOutlined',
-    'file-text': 'FileTextOutlined',
-    picture: 'PictureOutlined',
-    diff: 'DiffOutlined',
-    'clock-circle': 'ClockCircleOutlined',
-    key: 'KeyOutlined',
-    qrcode: 'QrcodeOutlined',
+    code: Icons.CodeOutlined,
+    'bg-colors': Icons.BgColorsOutlined,
+    'file-text': Icons.FileTextOutlined,
+    picture: Icons.PictureOutlined,
+    diff: Icons.DiffOutlined,
+    'clock-circle': Icons.ClockCircleOutlined,
+    key: Icons.KeyOutlined,
+    qrcode: Icons.QrcodeOutlined,
+    message: Icons.MessageOutlined,
   };
   
-  const componentName = iconMap[iconName] || 'AppstoreOutlined';
-  return Icons[componentName as keyof typeof Icons];
+  return iconMap[iconName] || Icons.AppstoreOutlined;
 };
 
 // 根据分类返回对应的样式类
@@ -126,6 +140,8 @@ const getCategoryClass = (category: string) => {
 const handleOpenTool = () => {
   if (props.selectedTool?.id === TOOL_ID_JSON_FORMATTER) { // JSON格式化工具的ID
     showJSONFormatter.value = true;
+  } else if (props.selectedTool?.id === TOOL_ID_AI_CHAT) { // AI聊天工具的ID
+    showAIChat.value = true;
   }
 };
 </script>
