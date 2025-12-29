@@ -30,12 +30,9 @@
           <h3>输入JSON</h3>
         </div>
         <div class="container-body">
-          <a-input
+          <a-textarea
             v-model:value="inputValue"
-            type="textarea"
-            :rows="15"
             placeholder="请输入JSON数据..."
-            :auto-size="{ minRows: 15, maxRows: 25 }"
             class="json-input"
           />
         </div>
