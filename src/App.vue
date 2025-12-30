@@ -2,23 +2,23 @@
 import { useToolStore } from './stores/toolStore';
 import { ref } from 'vue';
 import type { Tool } from './stores/toolStore';
-import ToolDetailModal from './components/ToolDetailModal.vue';
+import { TOOL_ID_JSON_FORMATTER, TOOL_ID_AI_CHAT } from './stores/toolStore';
+import JSONFormatter from './components/JSONFormatter.vue';
+import AIChat from './components/AIChat.vue';
 
 const toolStore = useToolStore();
 
-// 控制工具详情弹窗显示
-const showToolDetail = ref(false);
+// 控制功能组件显示
+const showJSONFormatter = ref(false);
+const showAIChat = ref(false);
 
-// 处理工具点击事件
+// 处理工具点击事件，直接打开功能
 const handleToolClick = (tool: Tool) => {
-  toolStore.setSelectedTool(tool);
-  showToolDetail.value = true;
-};
-
-// 关闭详情弹窗
-const closeDetail = () => {
-  showToolDetail.value = false;
-  toolStore.setSelectedTool(null);
+  if (tool.id === TOOL_ID_JSON_FORMATTER) {
+    showJSONFormatter.value = true;
+  } else if (tool.id === TOOL_ID_AI_CHAT) {
+    showAIChat.value = true;
+  }
 };
 </script>
 
@@ -42,13 +42,27 @@ const closeDetail = () => {
       :handle-tool-click="handleToolClick"
     />
 
-    <!-- 工具详情弹窗 -->
-    <ToolDetailModal
-      :selected-tool="toolStore.selectedTool"
-      :visible="showToolDetail"
-      @update:visible="showToolDetail = $event"
-      @close="closeDetail"
-    />
+    <!-- JSON格式化工具模态框 -->
+    <a-modal
+      v-model:open="showJSONFormatter"
+      title="JSON格式化工具"
+      :footer="null"
+      width="900px"
+      body-style="padding: 20px"
+    >
+      <JSONFormatter />
+    </a-modal>
+
+    <!-- AI聊天工具模态框 -->
+    <a-modal
+      v-model:open="showAIChat"
+      title="AI聊天工具"
+      :footer="null"
+      width="900px"
+      body-style="padding: 20px"
+    >
+      <AIChat />
+    </a-modal>
   </div>
 </template>
 
