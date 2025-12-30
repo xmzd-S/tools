@@ -195,7 +195,7 @@ const getToolIcon = (iconName: string) => {
 <style scoped>
 .tools-container {
   min-height: 100vh;
-  background: #f8fafc;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f0f4f8 50%, #eef2f6 100%);
   padding: 32px 0;
   animation: fadeIn 0.5s ease-out;
 }

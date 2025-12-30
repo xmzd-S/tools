@@ -137,29 +137,6 @@ const handlePostClick = (post: BlogPost) => {
   padding: 80px 24px 60px;
   text-align: center;
   position: relative;
-  overflow: hidden;
-}
-
-.welcome-section::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-              radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-  animation: float 20s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  50% {
-    transform: translate(30px, -30px) rotate(180deg);
-  }
 }
 
 .welcome-content {
@@ -188,7 +165,7 @@ const handlePostClick = (post: BlogPost) => {
 }
 
 .welcome-highlight {
-  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -199,16 +176,16 @@ const handlePostClick = (post: BlogPost) => {
 }
 
 .welcome-subtitle {
-  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.9) 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  text-shadow: none;
 }
 
 .welcome-description {
   font-size: 20px;
-  color: rgba(255, 255, 255, 0.9);
+  color: #64748b;
   margin: 0 0 32px;
   font-weight: 400;
   letter-spacing: 0.5px;

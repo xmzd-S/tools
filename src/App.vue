@@ -75,7 +75,7 @@ const closeMobileMenu = () => {
 <style scoped>
 .app-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, #f5f7fa 0%, #f0f4f8 50%, #eef2f6 100%);
   color: #1e293b;
   position: relative;
   overflow-x: hidden;
@@ -102,13 +102,13 @@ const closeMobileMenu = () => {
   justify-content: space-between;
   align-items: center;
   padding: 16px 32px;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(20px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .nav-left h1 {
@@ -125,7 +125,7 @@ const closeMobileMenu = () => {
 .nav-right {
   display: flex;
   gap: 8px;
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(102, 126, 234, 0.06);
   padding: 6px;
   border-radius: 12px;
 }
