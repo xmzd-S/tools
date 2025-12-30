@@ -1,25 +1,8 @@
 <script setup lang="ts">
-import { useToolStore } from './stores/toolStore';
 import { ref } from 'vue';
-import type { Tool } from './stores/toolStore';
-import { TOOL_ID_JSON_FORMATTER, TOOL_ID_AI_CHAT } from './stores/toolStore';
-import JSONFormatter from './components/JSONFormatter.vue';
-import AIChat from './components/AIChat.vue';
 import { MenuOutlined, CloseOutlined } from '@ant-design/icons-vue';
 
-const toolStore = useToolStore();
-
-const showJSONFormatter = ref(false);
-const showAIChat = ref(false);
 const mobileMenuVisible = ref(false);
-
-const handleToolClick = (tool: Tool) => {
-  if (tool.id === TOOL_ID_JSON_FORMATTER) {
-    showJSONFormatter.value = true;
-  } else if (tool.id === TOOL_ID_AI_CHAT) {
-    showAIChat.value = true;
-  }
-};
 
 const toggleMobileMenu = () => {
   mobileMenuVisible.value = !mobileMenuVisible.value;
@@ -42,6 +25,7 @@ const closeMobileMenu = () => {
         <router-link to="/dashboard" class="nav-link">控制台</router-link>
         <router-link to="/blog" class="nav-link">博客文章</router-link>
         <router-link to="/categories" class="nav-link">分类管理</router-link>
+        <router-link to="/tools" class="nav-link">工具</router-link>
         <router-link to="/about" class="nav-link">关于我们</router-link>
       </div>
       <div class="mobile-menu-btn" @click="toggleMobileMenu">
@@ -70,6 +54,10 @@ const closeMobileMenu = () => {
           <span class="link-icon">📁</span>
           <span>分类管理</span>
         </router-link>
+        <router-link to="/tools" class="mobile-nav-link" @click="closeMobileMenu">
+          <span class="link-icon">🔧</span>
+          <span>工具</span>
+        </router-link>
         <router-link to="/about" class="mobile-nav-link" @click="closeMobileMenu">
           <span class="link-icon">ℹ️</span>
           <span>关于我们</span>
@@ -80,31 +68,7 @@ const closeMobileMenu = () => {
 
 
     <!-- 路由视图 -->
-    <router-view 
-      :handle-tool-click="handleToolClick"
-    />
-
-    <!-- JSON格式化工具模态框 -->
-    <a-modal
-      v-model:open="showJSONFormatter"
-      title="JSON格式化工具"
-      :footer="null"
-      width="900px"
-      body-style="padding: 20px"
-    >
-      <JSONFormatter />
-    </a-modal>
-
-    <!-- AI聊天工具模态框 -->
-    <a-modal
-      v-model:open="showAIChat"
-      title="AI聊天工具"
-      :footer="null"
-      width="900px"
-      body-style="padding: 20px"
-    >
-      <AIChat />
-    </a-modal>
+    <router-view />
   </div>
 </template>
 
@@ -296,6 +260,7 @@ const closeMobileMenu = () => {
 .mobile-nav-link:nth-child(3) { animation-delay: 0.15s; }
 .mobile-nav-link:nth-child(4) { animation-delay: 0.2s; }
 .mobile-nav-link:nth-child(5) { animation-delay: 0.25s; }
+.mobile-nav-link:nth-child(6) { animation-delay: 0.3s; }
 
 .mobile-nav-link:hover {
   background: rgba(102, 126, 234, 0.1);
