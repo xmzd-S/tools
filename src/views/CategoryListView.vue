@@ -422,20 +422,4 @@ const getIconComponent = (iconName: string) => {
   border-color: #1e293b;
   transform: scale(1.15);
 }
-
-@media (max-width: 768px) {
-  .category-header {
-    flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
-  }
-  
-  .categories-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .page-title {
-    font-size: 28px;
-  }
-}
 </style>

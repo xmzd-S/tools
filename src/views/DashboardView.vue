@@ -753,27 +753,4 @@ onMounted(() => {
 .action-card:hover span {
   color: #667eea;
 }
-
-@media (max-width: 1200px) {
-  .charts-section,
-  .tables-section {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .dashboard-header {
-    flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
-  }
-  
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .page-title {
-    font-size: 28px;
-  }
-}
 </style>

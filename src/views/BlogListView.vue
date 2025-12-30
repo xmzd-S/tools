@@ -584,33 +584,4 @@ const getIconComponent = (iconName: string) => {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
 }
-
-@media (max-width: 1200px) {
-  .blog-content {
-    grid-template-columns: 1fr;
-  }
-  
-  .sidebar {
-    display: none;
-  }
-}
-
-@media (max-width: 768px) {
-  .posts-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .page-title {
-    font-size: 28px;
-  }
-  
-  .filter-bar {
-    flex-direction: column;
-  }
-  
-  .filter-bar :deep(.ant-space) {
-    width: 100%;
-    flex-wrap: wrap;
-  }
-}
 </style>
