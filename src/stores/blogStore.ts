@@ -1,5 +1,7 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
+import blogApi from '../services/blogApi';
+import type { BlogPostCreate, BlogPostUpdate, BlogListParams } from '../services/blogApi';
 
 export interface BlogPost {
   id: string;
@@ -18,111 +20,19 @@ export interface BlogPost {
   status: 'draft' | 'published';
 }
 
-export const initialBlogPosts: BlogPost[] = [
-  {
-    id: '1',
-    title: 'Vue 3 Composition API 深度解析',
-    content: 'Vue 3 的 Composition API 是一个重大的更新，它提供了更好的代码组织方式和逻辑复用能力。本文将深入探讨 Composition API 的核心概念、使用场景以及最佳实践...',
-    excerpt: '深入探讨 Vue 3 Composition API 的核心概念、使用场景以及最佳实践',
-    categoryId: '1',
-    categoryName: '前端开发',
-    author: '张三',
-    coverImage: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800',
-    views: 1250,
-    likes: 89,
-    createdAt: '2024-01-15T10:30:00',
-    updatedAt: '2024-01-15T10:30:00',
-    tags: ['Vue3', 'Composition API', '前端'],
-    status: 'published'
-  },
-  {
-    id: '2',
-    title: 'TypeScript 高级类型系统指南',
-    content: 'TypeScript 的类型系统非常强大，本文将介绍泛型、条件类型、映射类型等高级特性，帮助你更好地掌握 TypeScript...',
-    excerpt: '全面介绍 TypeScript 的泛型、条件类型、映射类型等高级特性',
-    categoryId: '1',
-    categoryName: '前端开发',
-    author: '李四',
-    coverImage: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=800',
-    views: 980,
-    likes: 67,
-    createdAt: '2024-01-20T14:20:00',
-    updatedAt: '2024-01-20T14:20:00',
-    tags: ['TypeScript', '类型系统', '前端'],
-    status: 'published'
-  },
-  {
-    id: '3',
-    title: 'React Hooks 最佳实践',
-    content: 'React Hooks 改变了我们编写 React 组件的方式。本文将分享 Hooks 的使用技巧和常见陷阱...',
-    excerpt: '分享 React Hooks 的使用技巧、最佳实践和常见陷阱',
-    categoryId: '1',
-    categoryName: '前端开发',
-    author: '王五',
-    coverImage: 'https://images.unsplash.com/photo-1633356122102-3fe601e05bd2?w=800',
-    views: 1560,
-    likes: 112,
-    createdAt: '2024-02-01T09:15:00',
-    updatedAt: '2024-02-01T09:15:00',
-    tags: ['React', 'Hooks', '前端'],
-    status: 'published'
-  },
-  {
-    id: '4',
-    title: 'Node.js 性能优化实战',
-    content: '在生产环境中，Node.js 应用的性能至关重要。本文将从多个角度介绍 Node.js 性能优化的方法和技巧...',
-    excerpt: '从多个角度介绍 Node.js 性能优化的方法和技巧',
-    categoryId: '2',
-    categoryName: '后端开发',
-    author: '赵六',
-    coverImage: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=800',
-    views: 890,
-    likes: 54,
-    createdAt: '2024-02-10T16:45:00',
-    updatedAt: '2024-02-10T16:45:00',
-    tags: ['Node.js', '性能优化', '后端'],
-    status: 'published'
-  },
-  {
-    id: '5',
-    title: 'Docker 容器化部署入门',
-    content: 'Docker 是现代应用部署的重要工具。本文将带你了解 Docker 的基本概念、常用命令以及如何将应用容器化...',
-    excerpt: '了解 Docker 的基本概念、常用命令以及应用容器化方法',
-    categoryId: '3',
-    categoryName: 'DevOps',
-    author: '钱七',
-    coverImage: 'https://images.unsplash.com/photo-1605745341112-85968b19335b?w=800',
-    views: 720,
-    likes: 43,
-    createdAt: '2024-02-15T11:30:00',
-    updatedAt: '2024-02-15T11:30:00',
-    tags: ['Docker', '容器化', 'DevOps'],
-    status: 'published'
-  },
-  {
-    id: '6',
-    title: '微服务架构设计模式',
-    content: '微服务架构已成为现代应用开发的主流选择。本文将介绍微服务的设计原则、常见模式以及实施策略...',
-    excerpt: '介绍微服务的设计原则、常见模式以及实施策略',
-    categoryId: '2',
-    categoryName: '后端开发',
-    author: '孙八',
-    coverImage: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800',
-    views: 1100,
-    likes: 78,
-    createdAt: '2024-02-20T13:00:00',
-    updatedAt: '2024-02-20T13:00:00',
-    tags: ['微服务', '架构设计', '后端'],
-    status: 'published'
-  }
-];
-
 export const useBlogStore = defineStore('blog', () => {
-  const posts = ref<BlogPost[]>(JSON.parse(JSON.stringify(initialBlogPosts)));
+  // 状态管理
+  const posts = ref<BlogPost[]>([]);
   const searchKeyword = ref('');
   const selectedCategory = ref<string>('');
   const selectedTag = ref<string>('');
+  const isLoading = ref(false);
+  const error = ref<string | null>(null);
+  const totalPosts = ref(0);
+  const currentPage = ref(1);
+  const pageSize = ref(10);
 
+  // 计算属性
   const allPosts = computed(() => posts.value);
 
   const publishedPosts = computed(() => 
@@ -175,6 +85,84 @@ export const useBlogStore = defineStore('blog', () => {
     return Array.from(tagSet);
   });
 
+  // 异步方法
+  const fetchPosts = async (params?: BlogListParams) => {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const response = await blogApi.getBlogList({
+        page: params?.page || currentPage.value,
+        size: params?.size || pageSize.value,
+        categoryId: params?.categoryId || selectedCategory.value,
+        tag: params?.tag || selectedTag.value,
+        keyword: params?.keyword || searchKeyword.value,
+        status: params?.status
+      });
+      posts.value = response.list;
+      totalPosts.value = response.total;
+    } catch (err: any) {
+      error.value = err.message || '获取文章列表失败';
+      console.error('获取文章列表失败:', err);
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  const fetchPostById = async (id: string) => {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const response = await blogApi.getBlogDetail(id);
+      return response.post;
+    } catch (err: any) {
+      error.value = err.message || '获取文章详情失败';
+      console.error('获取文章详情失败:', err);
+      return null;
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  const fetchHotPosts = async (limit: number = 5) => {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const response = await blogApi.getHotBlogs(limit);
+      return response.list;
+    } catch (err: any) {
+      error.value = err.message || '获取热门文章失败';
+      console.error('获取热门文章失败:', err);
+      return [];
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  const fetchRecentPosts = async (limit: number = 5) => {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const response = await blogApi.getRecentBlogs(limit);
+      return response.list;
+    } catch (err: any) {
+      error.value = err.message || '获取最新文章失败';
+      console.error('获取最新文章失败:', err);
+      return [];
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  const fetchAllTags = async () => {
+    try {
+      const response = await blogApi.getAllTags();
+      return response.tags;
+    } catch (err: any) {
+      console.error('获取标签列表失败:', err);
+      return [];
+    }
+  };
+
   const getPostById = (id: string) => {
     return posts.value.find(post => post.id === id);
   };
@@ -183,70 +171,129 @@ export const useBlogStore = defineStore('blog', () => {
     return posts.value.filter(post => post.categoryId === categoryId);
   };
 
-  const addPost = (post: Omit<BlogPost, 'id' | 'createdAt' | 'updatedAt' | 'views' | 'likes'>) => {
-    const newPost: BlogPost = {
-      ...post,
-      id: Date.now().toString(),
-      views: 0,
-      likes: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    posts.value.unshift(newPost);
-    return newPost;
-  };
-
-  const updatePost = (id: string, updates: Partial<BlogPost>) => {
-    const index = posts.value.findIndex(post => post.id === id);
-    if (index !== -1) {
-      posts.value[index] = {
-        ...posts.value[index],
-        ...updates,
-        updatedAt: new Date().toISOString()
-      };
+  const addPost = async (post: BlogPostCreate) => {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const response = await blogApi.createBlog(post);
+      posts.value.unshift(response.post);
+      totalPosts.value++;
+      return response.post;
+    } catch (err: any) {
+      error.value = err.message || '创建文章失败';
+      console.error('创建文章失败:', err);
+      throw err;
+    } finally {
+      isLoading.value = false;
     }
   };
 
-  const deletePost = (id: string) => {
-    const index = posts.value.findIndex(post => post.id === id);
-    if (index !== -1) {
-      posts.value.splice(index, 1);
+  const updatePost = async (id: string, updates: BlogPostUpdate) => {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const response = await blogApi.updateBlog(id, updates);
+      const index = posts.value.findIndex(post => post.id === id);
+      if (index !== -1) {
+        posts.value[index] = response.post;
+      }
+      return response.post;
+    } catch (err: any) {
+      error.value = err.message || '更新文章失败';
+      console.error('更新文章失败:', err);
+      throw err;
+    } finally {
+      isLoading.value = false;
     }
   };
 
-  const incrementViews = (id: string) => {
-    const post = getPostById(id);
-    if (post) {
-      post.views += 1;
+  const deletePost = async (id: string) => {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      await blogApi.deleteBlog(id);
+      const index = posts.value.findIndex(post => post.id === id);
+      if (index !== -1) {
+        posts.value.splice(index, 1);
+        totalPosts.value--;
+      }
+    } catch (err: any) {
+      error.value = err.message || '删除文章失败';
+      console.error('删除文章失败:', err);
+      throw err;
+    } finally {
+      isLoading.value = false;
     }
   };
 
-  const toggleLike = (id: string) => {
-    const post = getPostById(id);
-    if (post) {
-      post.likes += 1;
+  const incrementViews = async (id: string) => {
+    try {
+      const response = await blogApi.incrementViews(id);
+      const post = getPostById(id);
+      if (post) {
+        post.views = response.views;
+      }
+      return response.views;
+    } catch (err: any) {
+      console.error('增加浏览量失败:', err);
+      return 0;
     }
   };
 
+  const toggleLike = async (id: string) => {
+    try {
+      const response = await blogApi.likeBlog(id);
+      const post = getPostById(id);
+      if (post) {
+        post.likes = response.likes;
+      }
+      return response.likes;
+    } catch (err: any) {
+      console.error('点赞失败:', err);
+      return 0;
+    }
+  };
+
+  // 过滤和分页方法
   const setSearchKeyword = (keyword: string) => {
     searchKeyword.value = keyword;
+    currentPage.value = 1;
+    fetchPosts();
   };
 
   const setSelectedCategory = (categoryId: string) => {
     selectedCategory.value = categoryId;
+    currentPage.value = 1;
+    fetchPosts();
   };
 
   const setSelectedTag = (tag: string) => {
     selectedTag.value = tag;
+    currentPage.value = 1;
+    fetchPosts();
   };
 
   const resetFilters = () => {
     searchKeyword.value = '';
     selectedCategory.value = '';
     selectedTag.value = '';
+    currentPage.value = 1;
+    fetchPosts();
+  };
+
+  const setPage = (page: number) => {
+    currentPage.value = page;
+    fetchPosts();
+  };
+
+  const setPageSize = (size: number) => {
+    pageSize.value = size;
+    currentPage.value = 1;
+    fetchPosts();
   };
 
   return {
+    // 状态
     posts: allPosts,
     publishedPosts,
     filteredPosts,
@@ -256,7 +303,18 @@ export const useBlogStore = defineStore('blog', () => {
     searchKeyword,
     selectedCategory,
     selectedTag,
+    isLoading,
+    error,
+    totalPosts,
+    currentPage,
+    pageSize,
 
+    // 方法
+    fetchPosts,
+    fetchPostById,
+    fetchHotPosts,
+    fetchRecentPosts,
+    fetchAllTags,
     getPostById,
     getPostsByCategory,
     addPost,
@@ -267,6 +325,8 @@ export const useBlogStore = defineStore('blog', () => {
     setSearchKeyword,
     setSelectedCategory,
     setSelectedTag,
-    resetFilters
+    resetFilters,
+    setPage,
+    setPageSize
   };
 });

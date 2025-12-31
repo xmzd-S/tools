@@ -2,7 +2,13 @@
   <div class="category-list">
     <div class="category-header">
       <h1 class="page-title">文章分类</h1>
-      <a-button type="primary" size="large" @click="showCreateModal = true">
+      <a-button 
+        type="primary" 
+        size="large" 
+        @click="showCreateModal = true"
+        :disabled="!isAuthenticated"
+        :class="{ 'btn-disabled': !isAuthenticated }"
+      >
         <PlusOutlined />
         新建分类
       </a-button>
@@ -132,6 +138,7 @@ import { ref, computed, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCategoryStore } from '../stores/categoryStore';
 import { useBlogStore } from '../stores/blogStore';
+import { useAuthStore } from '../stores/authStore';
 import { PlusOutlined, MoreOutlined, EditOutlined, DeleteOutlined, FileTextOutlined, CalendarOutlined, CodeOutlined, SaveOutlined, CloudOutlined, DatabaseOutlined, ApartmentOutlined, RobotOutlined } from '@ant-design/icons-vue';
 import type { Category } from '../stores/categoryStore';
 import { message } from 'ant-design-vue';
@@ -139,6 +146,7 @@ import { message } from 'ant-design-vue';
 const router = useRouter();
 const categoryStore = useCategoryStore();
 const blogStore = useBlogStore();
+const authStore = useAuthStore();
 
 const showCreateModal = ref(false);
 const editingCategory = ref<Category | null>(null);
@@ -164,6 +172,7 @@ const presetColors = [
 ];
 
 const categories = computed(() => categoryStore.categories);
+const isAuthenticated = computed(() => authStore.isAuthenticated);
 
 const handleCategoryClick = (category: Category) => {
   blogStore.setSelectedCategory(category.id);
@@ -171,6 +180,12 @@ const handleCategoryClick = (category: Category) => {
 };
 
 const handleEdit = (category: Category) => {
+  // 验证登录状态
+  if (!isAuthenticated.value) {
+    message.warning('请先登录');
+    return;
+  }
+  
   editingCategory.value = category;
   formData.name = category.name;
   formData.description = category.description;
@@ -180,6 +195,12 @@ const handleEdit = (category: Category) => {
 };
 
 const handleDelete = (category: Category) => {
+  // 验证登录状态
+  if (!isAuthenticated.value) {
+    message.warning('请先登录');
+    return;
+  }
+  
   if (category.postCount > 0) {
     message.warning('该分类下还有文章，无法删除');
     return;
@@ -190,6 +211,12 @@ const handleDelete = (category: Category) => {
 };
 
 const handleSubmit = () => {
+  // 验证登录状态
+  if (!isAuthenticated.value) {
+    message.warning('请先登录');
+    return;
+  }
+  
   if (editingCategory.value) {
     categoryStore.updateCategory(editingCategory.value.id, {
       name: formData.name,
@@ -421,5 +448,23 @@ const getIconComponent = (iconName: string) => {
 .color-option.active {
   border-color: #1e293b;
   transform: scale(1.15);
+}
+
+/* 禁用按钮样式 */
+.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  background: #d9d9d9 !important;
+  border-color: #d9d9d9 !important;
+  color: #bfbfbf !important;
+}
+
+:deep(.ant-btn.btn-disabled:hover) {
+  background: #d9d9d9 !important;
+  border-color: #d9d9d9 !important;
+  color: #bfbfbf !important;
+  transform: none !important;
+  box-shadow: none !important;
 }
 </style>

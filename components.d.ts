@@ -37,6 +37,7 @@ declare module 'vue' {
     BlogPostCard: typeof import('./src/components/BlogPostCard.vue')['default']
     BlogPostDetail: typeof import('./src/components/BlogPostDetail.vue')['default']
     JSONFormatter: typeof import('./src/components/JSONFormatter.vue')['default']
+    LoginForm: typeof import('./src/components/LoginForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ToolCard: typeof import('./src/components/ToolCard.vue')['default']

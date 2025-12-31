@@ -11,12 +11,34 @@
         <router-link to="/categories" class="nav-link">分类管理</router-link>
         <router-link to="/tools" class="nav-link">工具</router-link>
         <router-link to="/about" class="nav-link">关于我们</router-link>
+        
+        <div class="auth-section">
+          <!-- 已登录状态 -->
+          <div v-if="authStore.isAuthenticated" class="user-profile">
+            <span class="username">{{ authStore.user?.username }}</span>
+            <button @click="handleLogout" class="logout-button">登出</button>
+          </div>
+          
+          <!-- 未登录状态 -->
+          <router-link v-else to="/login" class="nav-link login-button">登录</router-link>
+        </div>
       </div>
     </div>
 
     <router-view />
   </div>
 </template>
+
+<script setup lang="ts">
+import { useAuthStore } from './stores/authStore';
+
+const authStore = useAuthStore();
+
+// 处理登出
+const handleLogout = async () => {
+  await authStore.logout();
+};
+</script>
 
 <style scoped>
 .app-container {
@@ -78,6 +100,55 @@
   background: rgba(102, 126, 234, 0.06);
   padding: 6px;
   border-radius: 12px;
+}
+
+.auth-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(102, 126, 234, 0.1);
+  padding: 6px 12px;
+  border-radius: 10px;
+}
+
+.username {
+  font-size: 14px;
+  font-weight: 600;
+  color: #667eea;
+}
+
+.logout-button {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-button:hover {
+  background: rgba(239, 68, 68, 0.2);
+  transform: translateY(-1px);
+}
+
+.login-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white !important;
+  font-weight: 600;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-primary);
 }
 
 .nav-link {
