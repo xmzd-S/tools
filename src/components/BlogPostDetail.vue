@@ -100,7 +100,7 @@ const route = useRoute();
 const router = useRouter();
 const blogStore = useBlogStore();
 
-const post = ref<BlogPost | null>(null);
+const post = ref<BlogPost>();
 
 const relatedPosts = computed(() => {
   if (!post.value) return [];

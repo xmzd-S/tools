@@ -1,6 +1,3 @@
-<script setup lang="ts">
-</script>
-
 <template>
   <div class="app-container">
     <div class="nav-bar">
@@ -23,6 +20,11 @@
 
 <style scoped>
 .app-container {
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --shadow-primary: 0 4px 12px rgba(102, 126, 234, 0.3);
+  --shadow-active: 0 4px 12px rgba(102, 126, 234, 0.4);
+  --color-white: white;
+  
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #f0f4f8 50%, #eef2f6 100%);
   color: #1e293b;
@@ -63,7 +65,7 @@
   margin: 0;
   font-size: 28px;
   font-weight: 800;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -97,16 +99,16 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: -1;
 }
 
 .nav-link:hover {
-  color: white;
+  color: var(--color-white);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: var(--shadow-primary);
 }
 
 .nav-link:hover::before {
@@ -114,10 +116,10 @@
 }
 
 .nav-link.router-link-active {
-  color: white;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: var(--color-white);
+  background: var(--gradient-primary);
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: var(--shadow-active);
 }
 
 :deep(.ant-modal) {
@@ -127,19 +129,19 @@
 }
 
 :deep(.ant-modal-header) {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   border-bottom: none;
   padding: 20px 24px;
 }
 
 :deep(.ant-modal-title) {
-  color: white;
+  color: var(--color-white);
   font-size: 20px;
   font-weight: 600;
 }
 
 :deep(.ant-modal-close-x) {
-  color: white;
+  color: var(--color-white);
   font-size: 20px;
 }
 
